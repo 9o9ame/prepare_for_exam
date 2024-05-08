@@ -1,0 +1,28 @@
+page {
+      padding: 10px
+    }
+
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 30px
+    }
+
+    .logo img {
+      width: 10px;
+    }
+
+    .questions {
+      display: flex;
+      justify-content: start;
+      align-items: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .question-head {
+      font-weight: bold;
+      font-size: 20px;
+      margin-right: 10px;
+    }

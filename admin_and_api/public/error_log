@@ -1,0 +1,1 @@
+[23-Apr-2022 05:19:15 UTC] PHP Fatal error:  Declaration of App\Http\Middleware\Authenticate::redirectTo($request, Closure $next) must be compatible with Illuminate\Auth\Middleware\Authenticate::redirectTo($request) in /home1/webix4me/demo.webixun.com/moneykartadmin/app/Http/Middleware/Authenticate.php on line 16
