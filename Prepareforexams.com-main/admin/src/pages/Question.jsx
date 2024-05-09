@@ -22,7 +22,6 @@ export class Question extends Component {
     question: true,
     revisionnotes: false,
     liked: false,
-    question: true,
     question_id: '',
     question_data: [],
     single_question: [],
@@ -31,17 +30,57 @@ export class Question extends Component {
     active_cat: 'easy',
     current_question: [],
     questionLoading: false,
+    currentIndex: 0,
   };
 
   componentDidMount() {
     this.fetchQuestion('easy');
   }
 
-  fullQuestionView = (id, index) => {
+  fullQuestionView = (id, index, third) => {
+    // console.log(this.state);
+    // console.log(id);
     this.setState({ current_question: id });
-    this.setState({ questionListVisible: !this.state.questionListVisible });
+    if (index !== 'next_question') {
+      this.setState({ questionListVisible: !this.state.questionListVisible });
+    }
     this.fetchQuestion(this.state.active_cat);
   };
+
+   // Inside QuestionDetail component
+   handleNextPrevious = (handleNextPrevious) => {
+    const current_id = this.state.current_question.id;
+    const all_questions = this.state.question_data;
+  
+    const current_index = all_questions.findIndex(function (e) {
+      return e.id == current_id;
+    });
+    if (handleNextPrevious == 'next') {
+      if (current_index + 1 < all_questions.length) {
+        const next_question = all_questions[current_index + 1];
+        this.fullQuestionView(
+          next_question,
+          'next_question',
+          all_questions[current_index + 1]
+        );
+      } else {
+        alert('Thanks for completing the questions!');
+      }
+    }else if (handleNextPrevious == 'previous') {
+      if (current_index - 1 >= 0) {
+        const next_question = all_questions[current_index - 1];
+        this.fullQuestionView(
+          next_question,
+          'next_question',
+          all_questions[current_index - 1]
+        );
+      } else {
+        alert('Thanks for completing the questions!');
+      }
+     
+    }
+  };
+  
 
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
@@ -136,6 +175,7 @@ export class Question extends Component {
                 <QuestionDetail
                   fullQuestionView={this.fullQuestionView}
                   question={this.state.current_question}
+                  handleNextPrevious={this.handleNextPrevious} // Pass handleNextPrevious method to QuestionDetail component
                 />
               )}
             </div>
@@ -386,6 +426,11 @@ class QuestionDetail extends React.Component {
       : this.setState({ notes: '' });
   }
 
+  handleNextPrevious = (handleNextPrevious) => {
+    this.props.handleNextPrevious(handleNextPrevious);
+   
+  };
+
   updateQuestionStatus = (question_id, status) => {
     this.setState({ loading: true });
     fetch(api + 'update_question_status', {
@@ -455,6 +500,7 @@ class QuestionDetail extends React.Component {
 
   render() {
     return (
+      // this.setState({ notes: this.props.question.notes.question_notes })
       <div className="content-body">
         {/* Basic form layout section start */}
         <section id="basic-form-layouts">
@@ -533,6 +579,7 @@ class QuestionDetail extends React.Component {
                         <button
                           type="button"
                           className="text-capitalize  btn btn-outline-info"
+                          onClick={() => this.handleNextPrevious('previous')}
                         >
                           {' '}
                           Previous
@@ -637,6 +684,7 @@ class QuestionDetail extends React.Component {
                         <button
                           type="button"
                           className="text-capitalize  btn btn-outline-info"
+                          onClick={() => this.handleNextPrevious('next')} // Add onClick event for Next button
                         >
                           {' '}
                           Next
@@ -690,6 +738,7 @@ class QuestionDetail extends React.Component {
     );
   }
 }
+
 
 function Navigate(props) {
   const abcd = useNavigate();
