@@ -52,7 +52,8 @@ Route::get('payment_status', [AdminController::class, 'payment_status']);
 //     return "Hello";
 // });
 Route::group(['middleware' => 'student'], function () {
-    Route::get('student/dashboard', [DashboardController::class, 'studentDashboard']);
+    Route::get('student/dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
+    Route::get('student/subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
 });
 Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard']);

@@ -1,0 +1,146 @@
+*
+{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "Poppins", sans-serif;
+    background: #F4F5FA;
+}
+html body .content .content-wrapper {
+    padding: 2.1rem 2rem 0;
+}
+.bg-color{
+    background-color: #E0E0E0;
+}
+.nav-text {
+    color: #6B6F82;
+    font-size: 14px;
+}
+.left-nav{
+    margin-left: 55px;
+}
+.logo{
+    width: 10%;
+}
+.avatar {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    white-space: nowrap;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 0.8rem;
+    justify-content: center;
+    align-items: center;
+}
+.user-name{
+    margin-right: 5px;
+    font-weight: 600;
+}
+.header-count-box {
+    margin: 0 5px 0;
+    border: 1px solid #0e0e0e88;
+    border-radius: 5px;
+    padding: 5px;
+}
+.user{
+    margin-right: 40px;
+}
+.user a {
+    color: #1e9ff2;
+    text-decoration: none;
+    background-color: transparent;
+    font-size: 15px;
+    line-height: 1.45;
+}
+.right-header{
+    margin-right: 40px;
+}
+.bg-gradient-directional-danger {
+    background-image: linear-gradient(45deg, #ff1635, #ff7c8d);
+    background-repeat: repeat-x;
+}
+.bg-gradient-directional-success {
+    background-image: linear-gradient(45deg, #20a576, #4eddaa);
+    background-repeat: repeat-x;
+}
+.pull-up {
+    transition: all 0.25s ease;
+    border-radius: 8px;
+}
+.cursor-pointer {
+    cursor: pointer;
+}
+.dash-heading {
+    font-weight: 800;
+    font-size: 30px;
+    color: #464855;
+    font-family: Quicksand, Georgia, "Times New Roman", Times, serif;
+}
+.exam-enrolled-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.exam-enrolled-content h3{
+    font-size: 23px;
+}
+.text-left {
+    text-align: left !important;
+}
+.dash-heading1 {
+    font-size: 16px;
+    font-weight: 700;
+}
+.dash-sub-heading {
+    font-weight: 600;
+}
+.bg-gradient-x-info {
+    background-image: linear-gradient(to right, #0c84d1 0, #4eb4f5 100%);
+    background-repeat: repeat-x;
+}
+.card-image {
+    width: 44%;
+}
+.float-right {
+    float: right !important;
+}
+.info {
+    color: #1e9ff2 !important;
+}
+.bg-gradient-x-warning {
+    background-image: linear-gradient(to right, #ff7216 0, #ffb07c 100%);
+    background-repeat: repeat-x;
+}
+.bg-gradient-x-success {
+    background-image: linear-gradient(to right, #20a576 0, #4eddaa 100%);
+    background-repeat: repeat-x;
+}
+.pull-up:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 14px 24px rgba(62, 57, 107, 0.2);
+    z-index: 30;
+}
+.progress-sm{
+    height: 0.5rem;
+}
+.exam-name:hover{
+text-decoration: none;
+}
+.breadcrumb {
+    background-color: transparent;
+}
+.card1 {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 0.35rem;
+    min-height: 100vh;
+    background-color: #fff;
+}

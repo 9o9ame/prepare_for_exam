@@ -86,8 +86,8 @@ class AdminController extends Controller
         if ($result) {
             $id = $id->id;
             //   dd($id);
+            Session::put('email', $request->email);
             if ($request->checkbox == 'true') {
-                Session::put('email', $request->email);
                 Session::put('password', $request->password);
             }
             $request->session()->put('ADMIN_LOGIN', true);
@@ -95,8 +95,8 @@ class AdminController extends Controller
             return redirect('admin/dashboard');
         }else if ($student) {
             //   dd($id);
+            Session::put('email', $request->email);
             if ($request->checkbox == 'true') {
-                Session::put('email', $request->email);
                 Session::put('password', $request->password);
             }
             $request->session()->put('STUDENT_LOGIN', true);
