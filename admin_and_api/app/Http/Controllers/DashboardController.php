@@ -130,7 +130,8 @@ class DashboardController extends Controller
                 //     })->get(['id', 'board_name']);
                 // }
             }
-            return $data;
+
+            // return $data->where('id',$id);
             return view('Student.subjects',compact('data'));
         } else {
             $data = 'Exam Data List Not Found!';
