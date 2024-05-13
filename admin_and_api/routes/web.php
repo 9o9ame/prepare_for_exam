@@ -1,31 +1,32 @@
 <?php
 
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AllQueryController;
-use App\Http\Controllers\PendingQueryController;
-use App\Http\Controllers\CompletedQueryController;
-use App\Http\Controllers\ManageStatusController;
-use App\Http\Controllers\AdminManagementController;
-use App\Http\Controllers\AdminEmailController;
-use App\Http\Controllers\EmailSubscriberController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\LoanController;
-use App\Http\Controllers\VideoController;
-use App\Http\Controllers\TestimonialController;
-use App\Http\Controllers\ClientlogoController;
 use App\Http\Controllers\MailController;
-
-use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\SetupController;
+use App\Http\Controllers\VideoController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CountryController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\AllQueryController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminEmailController;
+use App\Http\Controllers\ClientlogoController;
+use App\Http\Controllers\StudentApiController;
 use App\Http\Controllers\QuestionSetController;
+use App\Http\Controllers\TestimonialController;
+
+use App\Http\Controllers\ManageStatusController;
+use App\Http\Controllers\PendingQueryController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\PreviousPaperController;
 use App\Http\Controllers\RevisionNotesController;
-use App\Http\Controllers\SubscriptionController;
-use GuzzleHttp\Middleware;
+use App\Http\Controllers\CompletedQueryController;
+use App\Http\Controllers\StudentProfileController;
+use App\Http\Controllers\AdminManagementController;
+use App\Http\Controllers\EmailSubscriberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,11 @@ Route::get('payment_status', [AdminController::class, 'payment_status']);
 Route::group(['middleware' => 'student'], function () {
     Route::get('student/dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
     Route::get('student/subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
+    Route::post('update-boards', [DashboardController::class, 'updateBoards'])->name('update-boards');
+    Route::POST('activate_board', [DashboardController::class,'activeBoard'])->name('activate_board');
+    Route::POST('create_order_request',[DashboardController::class,'create_order_request'])->name('create_order_request');
+    Route::get('fetch-subscription-panel', [DashboardController::class, 'fetch_subscription_panel']);
+    Route::POST('verify_order',[StudentApiController::class,'verify_order']);
 });
 Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard']);

@@ -6,7 +6,9 @@
     <link href="{{asset('app-assets/css/bootstrap.min.css')}}" rel="stylesheet">
     <link href="{{asset('assets/css/bootstrap-extended.css')}}" rel="stylesheet">
     {{-- <link href="{{asset('app-assets/css/bootstrap-extended.min.css')}}" rel="stylesheet"> --}}
-     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{--<link rel="stylesheet" type="text/css" href="{{ asset('app-assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css"

@@ -11,8 +11,9 @@ class Subject extends Model
     use HasFactory;
 
     public function boards()
-    {
-        return $this->belongsToMany(Board::class,Exam_Subject_Board::class, 'subject_id', 'board_id');;
-    }
+{
+    return $this->belongsToMany(Board::class, 'exam_subject_boards', 'subject_id', 'board_id')
+                ->withPivot('exam_id');
+}
 
 }

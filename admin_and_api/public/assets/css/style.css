@@ -144,3 +144,40 @@ text-decoration: none;
     min-height: 100vh;
     background-color: #fff;
 }
+.subscription-btn{
+    margin-left: 10px;
+    background-color: #666ee8;
+}
+.subscription-btn:hover{
+    background-color: #7c83eb !important;
+    border-color: #7c83eb !important;
+    box-shadow: none;
+}
+.subscription-btn:active{
+    background-color: #7c83eb !important;
+    border-color: #7c83eb !important;
+    box-shadow: none;
+}
+.subscription-btn:focus{
+    box-shadow: none;
+}
+
+.activate{
+    background-color: rgb(248, 215, 218);
+}
+
+.subject-active{
+    background-color: rgb(215, 217, 245);
+}
+.bg-primary {
+    background-color: #666ee8 !important;
+}
+.pricing-cards {
+    position: absolute;
+    top: 66%;
+    width: 100%;
+}
+.purchase-btn{
+    background-color: #666ee8 !important;
+}
+
