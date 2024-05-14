@@ -60,6 +60,12 @@ Route::group(['middleware' => 'student'], function () {
     Route::POST('create_order_request',[DashboardController::class,'create_order_request'])->name('create_order_request');
     Route::get('fetch-subscription-panel', [DashboardController::class, 'fetch_subscription_panel']);
     Route::POST('verify_order',[StudentApiController::class,'verify_order']);
+    Route::get('fetch-subjects/{id}', [DashboardController::class, 'fetchSubjects'])->name('fetch-subjects');
+    Route::POST('fetch-topics', [DashboardController::class, 'fetchTopics'])->name('fetch-topics');
+    Route::POST('fetch-question-details', [DashboardController::class, 'question_details'])->name('fetch-question-details');
+    Route::get('fetch-question-detail/{id}', [DashboardController::class, 'questionDetails'])->name('fetch-question-detail');
+    Route::get('mark-as/{id}/{mark}', [DashboardController::class, 'markAs'])->name('mark-as');
+    Route::POST('fetch-question', [DashboardController::class, 'fetch_question'])->name('fetch-question');
 });
 Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard']);
@@ -101,6 +107,7 @@ Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/show_exam/delete/{id}', [SetupController::class, 'delete_exam']);
 
     Route::get('admin/add_exam_subjects', [SetupController::class, 'add_exam_subjects']);
+    Route::get('select-exam/{id}', [SetupController::class, 'selectExam'])->name('select-exam');
     Route::post('admin/add_examsubjects', [SetupController::class, 'save_examsubjects']);
 
     Route::put('admin/status_change_exam/{id}', [SetupController::class, 'save_status_exam']);

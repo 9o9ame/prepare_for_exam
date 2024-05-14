@@ -180,4 +180,14 @@ text-decoration: none;
 .purchase-btn{
     background-color: #666ee8 !important;
 }
+.link-button {
+    background: none;
+    border: none;
+    color: #1e9ff2;
+    cursor: pointer;
+    font-size: inherit;
+}
+.bg-success {
+    background-color: #28d094 !important;
+}
 

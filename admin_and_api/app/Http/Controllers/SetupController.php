@@ -257,14 +257,27 @@ class SetupController extends Controller
         $subject = Subject::all();
         return view('Admin/addexam_subject', compact('exam', 'subject'));
     }
+    public function selectExam($id)
+    {
+        $subject = Subject::all();
+        $exam = Exam::find($id);
+        $subject_ids = $exam->subjects->pluck('id')->toArray();
+        $view_exam = '';
+        $view_exam .= view('Admin.selectExam', compact('subject_ids','subject'));
+        return response()->json([
+            'result'=>'success',
+            'view_exam'=>$view_exam
+        ]);
+    }
 
     public function save_examsubjects(Request $request)
     {
+        // return $request;
         $request->validate([
             'exam' => 'required',
             'subject' => 'required',
         ]);
-
+        Exam_Subject::where('exam_id', $request->exam)->delete();
         if (isset($request->subject)) {
             $dataa = [];
             $x = 0;
@@ -276,6 +289,8 @@ class SetupController extends Controller
             $data = Exam_Subject::insert($dataa);
             // $a = $dataa->save();
         }
+        // $exam = Exam::find($request->exam);
+        // $data = $exam->subjects->sync($request->subject);
 
         if ($data) {
             return redirect('admin/show_exam')->with('success', 'Exam - Subject Added Successfully');

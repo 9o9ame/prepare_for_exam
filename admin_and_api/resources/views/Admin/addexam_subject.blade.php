@@ -70,7 +70,7 @@
                                     <div class="col-md-12 col-lg-12">
                                         <label>Exam Name</label>
                                         <div class="form-group">
-                                            <select class="form-control" name="exam">
+                                            <select class="form-control select-exam" name="exam">
                                                 <option value="" style="display: none">Select Exam
                                                 </option>
                                                 @foreach ($exam as $exam)
@@ -85,22 +85,9 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="col-md-12 col-lg-12">
-                                        <label>Subject</label>
-                                        <div class="form-group">
-                                            @foreach ($subject as $subject)
-                                                <label><input type="checkbox" name="subject[]"
-                                                        value="{{ $subject->id }}">
-                                                    {{ $subject->subject_name }}</label><br>
-                                            @endforeach
-                                        </div>
-                                        <span class="text-danger">
-                                            @error('subject')
-                                                {{ $message }}
-                                            @enderror
-                                        </span>
-                                    </div>
+                                <div class="col-md-6 selectExam">
+                                    @include('Admin.selectExam')
+
                                 </div>
                             </div>
                     </div>
@@ -193,6 +180,32 @@
         //         $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         //     });
         // });
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $(document).on('change', '.select-exam', function() {
+                var exam_id = $(this).val();
+
+                // Define the route with a placeholder
+                var url = '{{ route('select-exam', ':id') }}';
+
+                // Replace the placeholder with the actual exam_id
+                url = url.replace(':id', exam_id);
+                // Send AJAX GET request
+                $.get({
+                    url: url, // Replace 'your_route_name' with the actual route name in Laravel
+                    success: function(response) {
+                        // Handle successful response
+                        console.log(response);
+                        $('.selectExam').html('')
+                        $('.selectExam').append(response.view_exam)
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors
+                        console.error(xhr.responseText);
+                    }
+                });
+            })
+        });
     </script>
 
 
