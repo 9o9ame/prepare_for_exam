@@ -67,7 +67,7 @@
                                             <div class="media d-flex">
                                                 <div class="media-body text-left">
                                                     <h6 class="dash-heading1">Total Number Of Questions Attempted</h6>
-                                                    <h3 class="info dash-sub-heading">3</h3>
+                                                    <h3 class="info dash-sub-heading">{{$data['total'] ?? ''}}</h3>
                                                 </div>
                                                 <div>
                                                     <img src="{{ asset('assets/images/my-status/mathques.png') }}"
@@ -77,7 +77,7 @@
                                             <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
                                                 <div class="progress-bar bg-gradient-x-info" role="progressbar"
                                                     aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 80%;"></div>
+                                                    style="width: 100%;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -91,15 +91,18 @@
                                                 <div class="media-body text-left">
                                                     <h6 class="dash-heading1">Total Number Of Questions Marked for Revisit
                                                     </h6>
-                                                    <h3 class="info dash-sub-heading">1</h3>
+                                                    <h3 class="info dash-sub-heading">{{$data['revisit'] ?? ''}}</h3>
+                                                    @php
+                                                    $revisit = ($data['revisit']*100)/$data['total']
+                                                    @endphp
                                                 </div>
                                                 <div><img src="{{ asset('assets/images/my-status/lastques.png') }}"
                                                         class="card-image float-right" alt=""></div>
                                             </div>
                                             <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
                                                 <div class="progress-bar bg-gradient-x-warning" role="progressbar"
-                                                    aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 65%;"></div>
+                                                    aria-valuenow="{{$revisit}}" aria-valuemin="0" aria-valuemax="100"
+                                                    style="width: {{$revisit}}%;"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -113,15 +116,18 @@
                                                 <div class="media-body text-left">
                                                     <h6 class="dash-heading1">Total Number Of Questions Marked as Completed
                                                     </h6>
-                                                    <h3 class="info dash-sub-heading">0</h3>
+                                                    <h3 class="info dash-sub-heading">{{$data['completed'] ?? ''}}</h3>
+                                                    @php
+                                                    $completed = ($data['completed']*100)/$data['total']
+                                                    @endphp
                                                 </div>
                                                 <div><img src="{{ asset('assets/images/my-status/totalquess.png') }}"
                                                         class="card-image float-right" alt=""></div>
                                             </div>
                                             <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
                                                 <div class="progress-bar bg-gradient-x-success" role="progressbar"
-                                                    aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
-                                                    style="width: 75%;"></div>
+                                                    aria-valuenow="{{$completed}}" aria-valuemin="0" aria-valuemax="100"
+                                                    style="width: {{$completed}}%;"></div>
                                             </div>
                                         </div>
                                     </div>

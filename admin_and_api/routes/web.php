@@ -27,6 +27,7 @@ use App\Http\Controllers\CompletedQueryController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\AdminManagementController;
 use App\Http\Controllers\EmailSubscriberController;
+use App\Http\Controllers\StudentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,24 +49,28 @@ Route::get('teacher_signup', [AdminController::class, 'signup_page']);
 Route::post('register_teacher', [AdminController::class, 'register_teacher']);
 Route::post('fetchcountrycode', [StudentProfileController::class, 'fetchcode']);
 
-Route::get('payment_status', [AdminController::class, 'payment_status']);
 // Route::get('admin/logout',function(){
-//     return "Hello";
-// });
-Route::group(['middleware' => 'student'], function () {
-    Route::get('student/dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
-    Route::get('student/subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
-    Route::post('update-boards', [DashboardController::class, 'updateBoards'])->name('update-boards');
-    Route::POST('activate_board', [DashboardController::class,'activeBoard'])->name('activate_board');
-    Route::POST('create_order_request',[DashboardController::class,'create_order_request'])->name('create_order_request');
-    Route::get('fetch-subscription-panel', [DashboardController::class, 'fetch_subscription_panel']);
-    Route::POST('verify_order',[StudentApiController::class,'verify_order']);
+    //     return "Hello";
+    // });
+    Route::group(['middleware' => 'student'], function () {
+        Route::get('student/dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
+        Route::get('student/subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
+        Route::post('update-boards', [DashboardController::class, 'updateBoards'])->name('update-boards');
+        Route::POST('activate_board', [DashboardController::class,'activeBoard'])->name('activate_board');
+        Route::POST('create_order_request',[DashboardController::class,'create_order_request'])->name('create_order_request');
+        Route::get('fetch-subscription-panel', [DashboardController::class, 'fetch_subscription_panel'])->name('fetch-subscription-panel');
+        Route::POST('verify_order',[StudentApiController::class,'verify_order'])->name('verify_order');
+        Route::get('payment_status/{CHECKOUT_SESSION_ID}', [DashboardController::class, 'verify_order']);
     Route::get('fetch-subjects/{id}', [DashboardController::class, 'fetchSubjects'])->name('fetch-subjects');
     Route::POST('fetch-topics', [DashboardController::class, 'fetchTopics'])->name('fetch-topics');
     Route::POST('fetch-question-details', [DashboardController::class, 'question_details'])->name('fetch-question-details');
-    Route::get('fetch-question-detail/{id}', [DashboardController::class, 'questionDetails'])->name('fetch-question-detail');
+    Route::POST('fetch-question-detail', [DashboardController::class, 'questionDetails'])->name('fetch-question-detail');
     Route::get('mark-as/{id}/{mark}', [DashboardController::class, 'markAs'])->name('mark-as');
     Route::POST('fetch-question', [DashboardController::class, 'fetch_question'])->name('fetch-question');
+    Route::POST('update_question_notes', [DashboardController::class, 'update_question_notes'])->name('update_question_notes');
+    Route::resource('students', StudentController::class);
+    Route::get('fetch_subscription_data',[StudentController::class,'fetchSubscriptionData'])->name('fetch-subscription-data');
+
 });
 Route::group(['middleware' => 'admin'], function () {
     Route::get('admin/dashboard', [DashboardController::class, 'dashboard']);

@@ -21,7 +21,7 @@ crossorigin="anonymous"></script>
 {{-- <script src="bower_components/sweetalert2/dist/sweetalert2.min.js"></script> --}}
 {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 <!-- jQuery -->
-
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @stack('scripts')
 {{-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

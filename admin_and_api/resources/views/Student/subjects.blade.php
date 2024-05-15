@@ -136,6 +136,7 @@
                 $(document).on('click', '.subject-div', function() {
                     $(this).toggleClass("activate");
                     var activeCount = $('.subject-div.activate').length;
+                    // alert(activeCount)
                     var exam_id = $(this).attr('exam_id');
                     var subject_id = $(this).attr('subject_id');
                     var board_id = $(this).attr('board_id');

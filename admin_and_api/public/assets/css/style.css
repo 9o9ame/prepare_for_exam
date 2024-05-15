@@ -12,7 +12,7 @@ html body .content .content-wrapper {
     padding: 2.1rem 2rem 0;
 }
 .bg-color{
-    background-color: #E0E0E0;
+    background-color: #E0E0E0 !important;
 }
 .nav-text {
     color: #6B6F82;
@@ -46,7 +46,8 @@ html body .content .content-wrapper {
     padding: 5px;
 }
 .user{
-    margin-right: 40px;
+    margin-right: 20px;
+    color: #1e9ff2;
 }
 .user a {
     color: #1e9ff2;

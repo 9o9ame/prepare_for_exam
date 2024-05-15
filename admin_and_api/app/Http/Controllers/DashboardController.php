@@ -15,9 +15,11 @@ use App\Models\Testimonial;
 use Illuminate\Support\Str;
 use App\Models\Subscription;
 use App\Models\student_question_read;
+use App\Models\student_question_note;
 use Illuminate\Http\Request;
 use App\Models\PreviousPaper;
 use App\Models\StudentProfile;
+use Carbon\Carbon;
 use App\Models\student_txn_log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -43,45 +45,43 @@ class DashboardController extends Controller
     }
     public function studentDashboard()
     {
-        $users = StudentProfile::count();
-        $paper = PreviousPaper::count();
-        $active_student = StudentProfile::where('status', 'Active')->count();
-        $inactive_student = StudentProfile::where('status', 'Inactive')->count();
         // $user_id = Auth::user()->id;
         // return $user_id;
         $all_exam = Exam::all();
         if (session()->has('STUDENT_LOGIN')) {
             $email = session()->get('email');
-            $student_id = StudentProfile::where('email', $email)->first()->id;
+            $student = StudentProfile::where('email', $email)->first();
         }
+        $data = [];
+        $data['total'] = student_question_read::where('student_id', $student->id)->count();
+        $data['revisit'] = student_question_read::where('student_id', $student->id)->where('type', 'revisit')->count();
+        $data['completed'] = student_question_read::where('student_id', $student->id)->where('type', 'complete')->count();
 
-        $studentExams = Exam::whereIn('id', function ($query) use ($student_id) {
-            $query->select('exam_id')->from('student_question_records')->where('student_id', $student_id);
+        $subscriptionExpireDate = Carbon::parse($student->subscription_expire);
+        $currentDate = Carbon::now();
+        $remainingDays = $currentDate->diffInDays($subscriptionExpireDate);
+
+        $studentExams = Exam::whereIn('id', function ($query) use ($student) {
+            $query->select('exam_id')->from('student_question_records')->where('student_id', $student->id);
         })->get(['id', 'exam_name']);
 
         if (count($studentExams) > 0) {
 
             foreach ($studentExams as $key => $value) {
-                $studentExams[$key]['subjects'] = Subject::whereIn('id', function ($query) use ($student_id, $value) {
-                    $query->select('subject_id')->from('student_question_records')->where('student_id', $student_id)->where('exam_id', $value->id);
+                $studentExams[$key]['subjects'] = Subject::whereIn('id', function ($query) use ($student, $value) {
+                    $query->select('subject_id')->from('student_question_records')->where('student_id', $student->id)->where('exam_id', $value->id);
                 })->get();
 
                 foreach ($studentExams[$key]['subjects'] as $key1 => $value1) {
-                    $studentExams[$key]['subjects'][$key1]['boards'] = Board::whereIn('id', function ($query) use ($student_id, $value, $value1) {
-                        $query->select('board_id')->from('student_question_records')->where('student_id', $student_id)->where('exam_id', $value->id)->where('subject_id', $value1->id);
+                    $studentExams[$key]['subjects'][$key1]['boards'] = Board::whereIn('id', function ($query) use ($student, $value, $value1) {
+                        $query->select('board_id')->from('student_question_records')->where('student_id', $student->id)->where('exam_id', $value->id)->where('subject_id', $value1->id);
                     })->get();
                 }
-                // foreach($studentExams[$key]['board'] as $key1=>$value1)
-                // {
-                //     $studentExams[$key]['board'][$key1]['subject'] = Board::whereIn('id',function($query) use($student_id,$value,$value1){
-                //         $query->select('subject_id')->from('student_question_records')->where('student_id',$student_id)->where('exam_id',$value->id)->where('board_id',$value1->id);
-                //     })->get(['id', 'board_name']);
-                // }
             }
             // return $studentExams;
-            return view('Student/dashboard', compact('all_exam', 'studentExams'));
+            return view('Student/dashboard', compact('all_exam', 'studentExams', 'data'));
         } else {
-            return view('Student/dashboard', compact('all_exam', 'studentExams'));
+            return view('Student/dashboard', compact('all_exam', 'studentExams', 'data'));
         }
     }
 
@@ -316,8 +316,8 @@ class DashboardController extends Controller
 
         $dm = $stripe->checkout->sessions->create([
             //  'success_url' => 'https://app.prepareforexams.com/payment_status/{CHECKOUT_SESSION_ID}',
-            'success_url' => 'http://localhost:5173/payment_status/{CHECKOUT_SESSION_ID}',
-            // 'success_url' => 'http://localhost:8000/payment_status/{CHECKOUT_SESSION_ID}',
+            // 'success_url' => 'http://localhost:5173/payment_status/{CHECKOUT_SESSION_ID}',
+            'success_url' => 'http://localhost:8000/payment_status/{CHECKOUT_SESSION_ID}',
             // 'success_url' => 'http://localhost:8000/verify_order/{CHECKOUT_SESSION_ID}',
             'line_items' => [
                 [
@@ -363,12 +363,16 @@ class DashboardController extends Controller
 
         return $response;
     }
-    public function verify_order(Request $request)
+    public function verify_order(Request $request, $txn_id)
     {
         $key = 'sk_test_51MI8XrCwZ9p12Xj5IzSGi3Wc8HYPZo1ZuFbceo7BDSSk3vIe6V8nHdyI0dJPZUSNphIv02aLKAC3jVTQY6jVsiAn00f2UDoIWz';
 
         $stripe = new \Stripe\StripeClient($key);
-        $txn_id = $request->txn_id;
+        if (session()->has('STUDENT_LOGIN')) {
+            $email = session()->get('email');
+            $auth_user = StudentProfile::where('email', $email)->first();
+        }
+        //    return $txn_id = $txn_id;
         try {
             $session = $stripe->checkout->sessions->retrieve($txn_id);
             if ($session->payment_status == 'paid') {
@@ -384,7 +388,7 @@ class DashboardController extends Controller
 
                     $plan_validity = $data->sv_month;
 
-                    $time = Auth::user()->subscription_expire;
+                    $time = $auth_user->subscription_expire;
                     $current_time = date('Y-m-d H:i:s');
 
                     $subscription = $data->subscription_id;
@@ -393,17 +397,17 @@ class DashboardController extends Controller
                     $plan_validity = $sd->sv_month;
 
                     if (strtotime($time) < strtotime($current_time)) {
-                        Auth::user()->subscription_expire = date('Y-m-d H:i:s', strtotime('+' . $plan_validity . ' months'));
+                        $auth_user->subscription_expire = date('Y-m-d H:i:s', strtotime('+' . $plan_validity . ' months'));
                     } else {
-                        Auth::user()->subscription_expire = date('Y-m-d H:i:s', strtotime('+' . $plan_validity . ' months', strtotime($time)));
+                        $auth_user->subscription_expire = date('Y-m-d H:i:s', strtotime('+' . $plan_validity . ' months', strtotime($time)));
                     }
 
-                    // Auth::user()->save();
+                    // $auth_user->save();
 
-                    StudentProfile::where('id', Auth::user()->id)->increment('board', $board_id);
-                    StudentProfile::where('id', Auth::user()->id)->increment('exam', $exam_id);
-                    StudentProfile::where('id', Auth::user()->id)->increment('subject', $subject_id);
-                    // $student=::find(Auth::user()->id);
+                    StudentProfile::where('id', $auth_user->id)->increment('board', $board_id);
+                    StudentProfile::where('id', $auth_user->id)->increment('exam', $exam_id);
+                    StudentProfile::where('id', $auth_user->id)->increment('subject', $subject_id);
+                    // $student=::find($auth_user->id);
 
                     // $student->increment('board' , );
                     // $student->increment('exam' , $exam_id);
@@ -413,7 +417,7 @@ class DashboardController extends Controller
 
                     $data->txn_status = 'success';
                     $data->save();
-
+                    return view('Student.checkout');
                     $response['status'] = true;
                     $response['msg'] = 'order verified';
                 }
@@ -578,17 +582,73 @@ class DashboardController extends Controller
         }
     }
 
-    public function questionDetails($id)
+    public function questionDetails(Request $request)
     {
+
         if (session()->has('STUDENT_LOGIN')) {
             $email = session()->get('email');
             $auth_user = StudentProfile::where('email', $email)->first();
         }
-        $question = QuestionSet::with(['notes' => function ($q) use ($auth_user) {
-            $q->where('student_id', $auth_user->id);
-        }])->find($id);
+        $subject_code = $request->subject_id;
+        $exam_id = $request->exam_id;
+        $board_id = $request->board_id;
+        $topic = $request->topic;
+        $subtopic = $request->subtopic;
+        $method = $request->question_type;
+        $currentQuestionId = $request->question_id;
+        $targetQuestionId = null;
+        // $data = QuestionSet::where('subject_id', $subject_code)->whereIn('id', function ($q) use ($board_id) {
+        //     $q->select('question_id')
+        //         ->from('question_boards')
+        //         ->where('board_id', $board_id);
+        // })->whereIn('id', function ($q) use ($exam_id) {
+        //     $q->select('question_id')
+        //         ->from('question_exams')
+        //         ->where('exam_id', $exam_id);
+        // })->where('topic', $topic)->where('sub_topic', $subtopic)->where('question_type', $method)->where('id', '>', $currentQuestionId)
+        // ->orderBy('id', 'asc')
+        // ->value('id');
+
+
+
+        if (isset($request->question_action)) {
+            if ($request->question_action == 'next') {
+                $targetQuestionId = QuestionSet::where('subject_id', $subject_code)->whereIn('id', function ($q) use ($board_id) {
+                    $q->select('question_id')
+                        ->from('question_boards')
+                        ->where('board_id', $board_id);
+                })->whereIn('id', function ($q) use ($exam_id) {
+                    $q->select('question_id')
+                        ->from('question_exams')
+                        ->where('exam_id', $exam_id);
+                })->where('topic', $topic)->where('sub_topic', $subtopic)->where('question_type', $method)->where('id', '>', $currentQuestionId)
+                    ->orderBy('id', 'asc')
+                    ->value('id');
+            } else if ($request->question_action == 'previous') {
+                $targetQuestionId = QuestionSet::where('subject_id', $subject_code)->whereIn('id', function ($q) use ($board_id) {
+                    $q->select('question_id')
+                        ->from('question_boards')
+                        ->where('board_id', $board_id);
+                })->whereIn('id', function ($q) use ($exam_id) {
+                    $q->select('question_id')
+                        ->from('question_exams')
+                        ->where('exam_id', $exam_id);
+                })->where('topic', $topic)->where('sub_topic', $subtopic)->where('question_type', $method)->where('id', '<', $currentQuestionId)
+                    ->orderBy('id', 'desc')
+                    ->value('id');
+            }
+        }
+
+        $targetQuestionId = $targetQuestionId ?? $currentQuestionId;
+
+        $question = QuestionSet::with(['reads' => function ($q) use ($auth_user) {
+            $q->where('student_id', '=', $auth_user->id);
+        }, 'notes' => function ($q) use ($auth_user) {
+            $q->where('student_id', '=', $auth_user->id);
+        }])->find($targetQuestionId);
+
         $view_card = '';
-        $view_card .= view('Student.questionDetailCard', compact('question'));
+        $view_card .= view('Student.questionDetailCard', compact('question', 'request'));
         return response()->json([
             'result' => 'success',
             'view_card' => $view_card
@@ -601,23 +661,54 @@ class DashboardController extends Controller
             $email = session()->get('email');
             $auth_user = StudentProfile::where('email', $email)->first();
         }
-         $studentQuestionRead = student_question_read::where('student_id', $auth_user->id)->where('question_id', $id)->first();
-        // If record exists, update it
-        if ($studentQuestionRead) {
-            $studentQuestionRead->type = $mark;
-            $studentQuestionRead->save();
 
-        } else {
-            // If record does not exist, create it
-            $studentQuestionRead = new student_question_read();
-            $studentQuestionRead->student_id = $auth_user->id;
-            $studentQuestionRead->question_id = $id;
-            $studentQuestionRead->type = $mark;
-            $studentQuestionRead->save();
-        }
+        student_question_read::where('student_id', $auth_user->id)->where('question_id', $id)->delete();
+
+        // If record does not exist, create it
+        $studentQuestionRead = new student_question_read();
+        $studentQuestionRead->student_id = $auth_user->id;
+        $studentQuestionRead->question_id = $id;
+        $studentQuestionRead->type = $mark;
+        $studentQuestionRead->save();
+
         return response()->json([
             'result' => 'success',
             'student_question' => $studentQuestionRead
         ]);
+    }
+    public function update_question_notes(Request $request)
+    {
+        // dd('lklkj');
+        $validator = Validator::make($request->all(), [
+
+            'question_id' => 'required',
+            'notes' => 'required | nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        if (session()->has('STUDENT_LOGIN')) {
+            $email = session()->get('email');
+            $auth_user = StudentProfile::where('email', $email)->first();
+        }
+        $student_id = $auth_user->id;
+        $question_id = $request->question_id;
+        $question_notes = $request->notes;
+
+        //insert or update
+
+        $matchThese = ['question_id' => $question_id, 'student_id' => $student_id];
+        // dd($matchThese, $question_notes);
+
+        $one = student_question_note::updateOrCreate($matchThese, ['question_notes' => $question_notes]);
+        // return $one;
+
+        if ($one) {
+            return response()->json(['status' => true, 'message' => 'Question Notes Updated Successfully!'], 200);
+        } else {
+            return response()->json(['status' => false, 'message' => 'Question Notes Not Updated!'], 200);
+        }
     }
 }

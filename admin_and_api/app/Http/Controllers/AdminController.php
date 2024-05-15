@@ -24,12 +24,12 @@ class AdminController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function  payment_status(Request $request)
+    public function  payment_status($session_id)
     {
         $key='sk_test_51MI8XrCwZ9p12Xj5IzSGi3Wc8HYPZo1ZuFbceo7BDSSk3vIe6V8nHdyI0dJPZUSNphIv02aLKAC3jVTQY6jVsiAn00f2UDoIWz';
 
         $stripe = new \Stripe\StripeClient($key);
-        $payment_id=$request->session_id;
+        $payment_id=$session_id;
         try {
             $session = $stripe->checkout->sessions->retrieve( $payment_id);
             if($session->payment_status=='paid')

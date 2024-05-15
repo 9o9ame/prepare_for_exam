@@ -2,7 +2,18 @@
     <div class="card-content collapse show">
         <div class="card-body">
             <div class="row">
-                <div class="col-md-6"><button type="button" class="btn btn-warning">View All Questions</button></div>
+                <div class="col-md-6">
+                    <form action="{{ route('fetch-question') }}" method="post" id="fetch-question">
+                        @csrf
+                        <input type="hidden" name="subject_id" value="{{ $request->subject_id ?? '' }}">
+                        <input type="hidden" name="exam_id" value="{{ $request->exam_id ?? '' }}">
+                        <input type="hidden" name="board_id" value="{{ $request->board_id ?? '' }}">
+                        <input type="hidden" name="topic" value="{{ $request->topic ?? '' }}">
+                        <input type="hidden" name="subtopic" value="{{ $request->subtopic ?? '' }}">
+                        <input type="hidden" name="question_type" value="{{ $request->question_type ?? '' }}">
+                        <button type="submit" class="btn btn-warning fetch-question-sub">View All Questions</button>
+                    </form>
+                </div>
                 <div class="col-md-6 d-flex justify-content-end"><button type="button"
                         class="btn btn-success">{{ $question->subject_code ?? '' }} {{ $question->year ?? '' }}
                         ({{ $question->mark ?? '' }} Marks)</button></div>
@@ -35,19 +46,61 @@
                 </div>
             </div>
             <div class="row my-4">
-                <div class="col-md-2 col-defined"><button type="button" class="text-capitalize  btn btn-outline-info">
-                        Previous</button></div>
-                <div class="col-md-2 col-defined"> <button type="button"
-                        class="text-capitalize  btn btn-outline-danger mark-as" url="{{route('mark-as',[$question->id,'complete'])}}"> Mark as Complete</button></div>
-                <div class="col-md-2 col-defined"><button class="text-capitalize  btn btn-outline-success mark-scheme"
-                       > <span class="show-hide">Show</span>
+                <div class="col-md-2 col-defined">
+                    <form method="post" class="question-detail-form">
+                        @csrf
+                        <input type="hidden" name="subject_id" value="{{ $request->subject_id ?? '' }}">
+                        <input type="hidden" name="exam_id" value="{{ $request->exam_id ?? '' }}">
+                        <input type="hidden" name="board_id" value="{{ $request->board_id ?? '' }}">
+                        <input type="hidden" name="topic" value="{{ $request->topic ?? '' }}">
+                        <input type="hidden" name="subtopic" value="{{ $request->subtopic ?? '' }}">
+                        <input type="hidden" name="question_type" value="{{ $request->question_type ?? '' }}">
+                        <input type="hidden" name="question_id" value="{{ $question->id ?? '' }}">
+                        <input type="hidden" name="question_action" value="previous">
+                            <button type="button" class="text-capitalize  btn btn-outline-info question-detail">
+                                Previous</button>
+                    </form>
+                    </div>
+                <div class="col-md-2 col-defined">
+                    <button type="button"
+                        class="text-capitalize complete  btn @if (isset($question->reads) && $question->reads->type == 'complete') bg-success text-white @endif  btn-outline-success  mark-as"
+                        url="{{ route('mark-as', [$question->id, 'complete']) }}"> Mark as Complete</button>
+                    <div class="spinner-border text-success d-none complete-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="col-md-2 col-defined"><button class="text-capitalize  btn btn-outline-success mark-scheme">
+                        <span class="show-hide">Show</span>
                         Mark-scheme</button></div>
                 <div class="col-md-2 col-defined"><button type="button"
-                        class="text-capitalize  btn btn-outline-success"> Update Notes</button></div>
+                        class="text-capitalize  btn btn-outline-success update-notes" q_id="{{ $question->id ?? '' }}">
+                        Update Notes</button>
+                    <div class="spinner-border text-success d-none update-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
                 <div class="col-md-2 col-defined"> <button type="button"
-                        class="text-capitalize  btn btn-outline-danger mark-as" url="{{route('mark-as',[$question->id,'revisit'])}}"> Mark Revisit</button></div>
-                <div class="col-md-2 col-defined"><button type="button" class="text-capitalize  btn btn-outline-info">
-                        Next</button></div>
+                        class="text-capitalize revisit btn @if (isset($question->reads) && $question->reads->type == 'revisit') bg-danger text-white @endif btn-outline-danger  mark-as"
+                        url="{{ route('mark-as', [$question->id, 'revisit']) }}"> Mark Revisit</button>
+                    <div class="spinner-border text-danger d-none revisit-spinner" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div class="col-md-2 col-defined">
+                    <form method="post" class="question-detail-form">
+                        @csrf
+                        <input type="hidden" name="subject_id" value="{{ $request->subject_id ?? '' }}">
+                        <input type="hidden" name="exam_id" value="{{ $request->exam_id ?? '' }}">
+                        <input type="hidden" name="board_id" value="{{ $request->board_id ?? '' }}">
+                        <input type="hidden" name="topic" value="{{ $request->topic ?? '' }}">
+                        <input type="hidden" name="subtopic" value="{{ $request->subtopic ?? '' }}">
+                        <input type="hidden" name="question_type" value="{{ $request->question_type ?? '' }}">
+                        <input type="hidden" name="question_id" value="{{ $question->id ?? '' }}">
+                        <input type="hidden" name="question_action" value="next">
+                        <button type="button" class="text-capitalize  btn btn-outline-info question-detail">
+                            Next</button>
+                    </form>
+                </div>
             </div>
             <div class="row mt-4 mark-scheme-content d-none">
                 <div class="col-xl-12 col-md-6 col-12">

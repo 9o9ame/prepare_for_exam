@@ -41,5 +41,6 @@
     {{-- <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/components.min.css')}}" /> --}}
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/core/menu/menu-types/horizontal-menu.min.css')}}" />
     <link rel="stylesheet" type="text/css" href="{{asset('app-assets/css/core/colors/palette-gradient.min.css')}}" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <link rel="stylesheet" href="{{ asset('assets/css/style.css') }}" />
 </head>
