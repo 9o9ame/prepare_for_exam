@@ -51,7 +51,19 @@ class AdminController extends Controller
     {
         return view('Admin/login');
     }
+    public function login()
+    {
+        return view('Student.login');
+    }
 
+    public function signupPage()
+    {
+        $school = School::all();
+        $board = Board::all();
+        $exam = Exam::all();
+        $country = Country::all();
+        return view('Student.register', compact('school', 'board', 'exam', 'country'));
+    }
     public function signup_page()
     {
         $school = School::all();
@@ -100,7 +112,7 @@ class AdminController extends Controller
                 Session::put('password', $request->password);
             }
             $request->session()->put('STUDENT_LOGIN', true);
-            return redirect('student/dashboard');
+            return redirect('dashboard');
         }
          else {
             $request->session()->flash('error', 'Please enter the Valid login details');

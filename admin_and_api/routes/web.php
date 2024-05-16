@@ -39,8 +39,10 @@ use App\Http\Controllers\StudentController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', [AdminController::class, 'index']);
+Route::POST('create-profile', [StudentProfileController::class, 'createProfile'])->name('student-register');
+Route::get('/', [AdminController::class, 'login'])->name('/');
+Route::get('signup', [AdminController::class, 'signupPage'])->name('signup');
+// Route::get('/', [AdminController::class, 'index']);
 Route::post('admin/auth', [AdminController::class, 'auth']);
 Route::get('admin/logout', [AdminController::class, 'logout']);
 Route::post('admin/get_status', [AdminController::class, 'get_status']);
@@ -53,8 +55,8 @@ Route::post('fetchcountrycode', [StudentProfileController::class, 'fetchcode']);
     //     return "Hello";
     // });
     Route::group(['middleware' => 'student'], function () {
-        Route::get('student/dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
-        Route::get('student/subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
+        Route::get('dashboard', [DashboardController::class, 'studentDashboard'])->name('student-dashboard');
+        Route::get('subject/{id}', [DashboardController::class, 'studentSubjects'])->name('student-subject');
         Route::post('update-boards', [DashboardController::class, 'updateBoards'])->name('update-boards');
         Route::POST('activate_board', [DashboardController::class,'activeBoard'])->name('activate_board');
         Route::POST('create_order_request',[DashboardController::class,'create_order_request'])->name('create_order_request');
@@ -70,6 +72,8 @@ Route::post('fetchcountrycode', [StudentProfileController::class, 'fetchcode']);
     Route::POST('update_question_notes', [DashboardController::class, 'update_question_notes'])->name('update_question_notes');
     Route::resource('students', StudentController::class);
     Route::get('fetch_subscription_data',[StudentController::class,'fetchSubscriptionData'])->name('fetch-subscription-data');
+    Route::POST('generate_pdf',[StudentController::class,'generatePDF'])->name('generate_pdf');
+    Route::get('open-pdf/{id}/{url}',[StudentController::class,'openPDF'])->name('open-pdf');
 
 });
 Route::group(['middleware' => 'admin'], function () {

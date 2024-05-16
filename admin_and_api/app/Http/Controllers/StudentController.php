@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Mpdf\Mpdf;
+use App\Models\QuestionSet;
 use Illuminate\Http\Request;
 use App\Models\StudentProfile;
 use App\Models\student_txn_log;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -157,5 +161,39 @@ class StudentController extends Controller
         if (count($data) > 0) {
             return view('Student.subsriptionHistory', compact('data'));
         }
+    }
+    public function generatePDF(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'question_id' => 'required',
+        ]);
+        // return $request;
+        if ($validator->fails()) {
+            return response()->json(['status' => false, 'errors' => $validator->errors()->all()], 422);
+        }
+
+        //	return json_encode($request->question_id);
+        $data = QuestionSet::whereIn('id', $request->question_id)->get();
+
+        $mpdf = new Mpdf(['mode' => 'utf-8', 'format' => [210, 297], 'margin_left' => 0, 'margin_right' => 0, 'margin_top' => 0.2, 'margin_bottom' => 0, 'margin_header' => 0, 'margin_footer' => 0]);
+        //
+        //write content
+        $mpdf->WriteHTML(view('printBill')->with('data', $data));
+
+        //return the PDF for download
+
+        $name = 'pdf/' . time() . '.pdf';
+        $mpdf->Output($name);
+        return redirect($name);
+        // return redirect('open-pdf/'.$name);
+        $response['status'] = true;
+        $response['pdf'] = $name;
+
+        return json_encode($response);
+    }
+    function openPDF($pdf, $url) {
+        // return $url;
+        $urlToOpen = 'http://localhost:8000/'.$pdf.'/'.$url;
+        return view('Student.open-pdf',compact('urlToOpen'));
     }
 }

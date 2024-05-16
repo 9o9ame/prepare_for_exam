@@ -21,15 +21,12 @@
                 <section id="basic-form-layouts">
                     <div class="row match-height">
                         <div class="col-md-12 change-card">
-
                                 @include('Student.questionDetailContent')
-
                         </div>
                     </div>
                 </section>
             </div>
         </div>
-
     </div>
     @push('scripts')
         <script>
@@ -40,13 +37,18 @@
                     if (type == 'question') {
                         $('.ppt').addClass('d-none')
                         $('.non-ppt').removeClass('d-none')
+                        $(this).addClass('btn-info text-white')
+                        $(this).siblings().removeClass('btn-info text-white')
                     } else if (type == 'revision') {
                         $('.non-ppt').addClass('d-none')
                         $('.ppt').removeClass('d-none')
+                        $(this).addClass('btn-info text-white')
+                        $(this).siblings().removeClass('btn-info text-white')
                     }
                 })
                 $(document).on('click', '.fetch-question-sub', function(event) {
                     event.preventDefault();
+
 
                     var question_type_value = $(this).attr('question_type')
                     if (question_type_value) {
@@ -101,6 +103,7 @@
                 });
                 $(document).on('click', '.question-detail', function() {
                     var formData = $(this).parent().serialize();
+                    console.log('hello');
                     $.post({
                         url: '{{ route('fetch-question-detail') }}', // Replace 'your_route_name' with the actual route name in Laravel
                         data: formData, // Replace 'your_route_name' with the actual route name in Laravel

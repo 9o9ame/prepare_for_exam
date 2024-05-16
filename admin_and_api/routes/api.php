@@ -3,7 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::POST('create-student-profile', [StudentProfileController::class, 'create_student_profile']);
+Route::POST('create-student-profile', [StudentProfileController::class, 'create_student_profile'])->name('student-register');
 Route::POST('login-student', [StudentProfileController::class, 'login_student']);
 Route::POST('otp-verification', [StudentProfileController::class, 'otp_verification']);
 // Route::GET('fetch-exams', [StudentProfileController::class, 'fetch_exams']);
@@ -28,7 +28,7 @@ Route::middleware('auth:api')->group(function () {
     Route::GET('fetch-exams', [StudentProfileController::class, 'fetch_exams']);
 
 	Route::POST('generate_pdf',[StudentApiController::class,'generate_pdf']);
-    
+
     Route::POST('update_student_profile_api', [StudentProfileController::class, 'update_student_profile_api']);
 
     Route::POSt('fetch_exam', [StudentApiController::class, 'fetch_exam']);
@@ -48,11 +48,11 @@ Route::middleware('auth:api')->group(function () {
     Route::POST('update_question_notes', [StudentApiController::class, 'update_question_notes']);
 
 	Route::POST('fetch_topics', [StudentApiController::class, 'fetch_topics']);
-	
+
 	Route::POST('fetch_questions', [StudentApiController::class, 'fetch_questions']);
-	
+
 	Route::POST('update_question_status', [StudentApiController::class, 'update_question_status']);
-	
+
     //for logout
     // Route::post('logout_user', [AuthController::class,'logout']);
 });

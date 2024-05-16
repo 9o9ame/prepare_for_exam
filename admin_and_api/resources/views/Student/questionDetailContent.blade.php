@@ -22,7 +22,7 @@
                     </form>
                 </div>
                 <div class="col-md-6  d-flex justify-content-end">
-                    <button type="button" class="btn btn-sm btn-info mr-1 style" types="question">Exam Style
+                    <button type="button" class="btn btn-sm btn-info btn-outline-info mr-1 style text-white" types="question">Exam Style
                         Questions</button>
                     <button type="button" class="btn btn-sm btn-outline-info mr-1 style"
                         types="revision">RevisionNotes</button>

@@ -554,14 +554,22 @@ class DashboardController extends Controller
 
                 // Your logic to fetch the question based on the question_type
                 $questionDetailContent = '';
-                $questionDetailContent .= view('Student.questionDetailContent', compact('data', 'request'));
+                if($auth_user->type == 'teacher'){
+                    $questionDetailContent .= view('Student.teacherQuestionDetailContent', compact('data', 'request'));
+                }else{
+                    $questionDetailContent .= view('Student.questionDetailContent', compact('data', 'request'));
+                }
                 // Example response
                 return response()->json([
                     'success' => true,
                     'question_view' => $questionDetailContent
                 ]);
             } else {
-                return view('Student.questionDetail', compact('data', 'request'));
+                if($auth_user->type == 'teacher'){
+                    return view('Student.teacherQuestionDetail', compact('data', 'request'));
+                }else{
+                    return view('Student.questionDetail', compact('data', 'request'));
+                }
             }
         } else {
             if ($request->isXmlHttpRequest()) {
@@ -570,14 +578,22 @@ class DashboardController extends Controller
 
                 // Your logic to fetch the question based on the question_type
                 $questionDetailContent = '';
-                $questionDetailContent .= view('Student.questionDetailContent', compact('data', 'request'));
+                if($auth_user->type == 'teacher'){
+                    $questionDetailContent .= view('Student.teacherQuestionDetailContent', compact('data', 'request'));
+                }else{
+                    $questionDetailContent .= view('Student.questionDetailContent', compact('data', 'request'));
+                }
                 // Example response
                 return response()->json([
                     'success' => true,
                     'question_view' => $questionDetailContent
                 ]);
             } else {
-                return view('Student.questionDetail', compact('data', 'request'));
+                if($auth_user->type == 'teacher'){
+                    return view('Student.teacherQuestionDetail', compact('data', 'request'));
+                }else{
+                    return view('Student.questionDetail', compact('data', 'request'));
+                }
             }
         }
     }

@@ -21,9 +21,9 @@ class StudentProfileController extends Controller
     public function get_student_profile()
     {
         $student_id = auth()->user()->id;
-		
+
         $student_profile = StudentProfile::where('id', $student_id)->first();
-		
+
 		$time=$student_profile->subscription_expire;
             $current_time=date('Y-m-d H:i:s');
             $diff=date_diff(date_create($current_time),date_create($time));
@@ -36,7 +36,7 @@ class StudentProfileController extends Controller
             {
                 $student_profile->subscription_expire=$diff->format("%a")+1;
             }
-			
+
         return response()->json(['status' => true, 'data' => $student_profile]);
     }
 
@@ -134,6 +134,71 @@ class StudentProfileController extends Controller
             return response()->json(['status' => false, 'error' => 'Student Already Registered, Please Login!'], 200);
         }
     }
+    public function createProfile(Request $request)
+    {
+        
+          $validator = Validator::make($request->all(), [
+            'first_name' => 'required|regex:/^[a-zA-Z\s]+$/',
+            'last_name' => 'required|regex:/^[a-zA-Z\s]+$/',
+            'country' => 'required',
+            // 'c_code' => 'required',
+            'contact' => 'required|regex:/^([+]\d{2})?\d{10}$/',
+            'email' => 'required',
+            // 'date_of_birth' => 'required',
+            'school' => 'required',
+            // 'board' => 'required',
+            // 'exam' => 'required',
+            // 'subject' => 'required',
+            'password' => 'required|min:8|',
+            'confirm_password' => 'required',
+        ]);
+
+        
+        if ($validator->fails()) {
+            // return $validator->errors()->all();
+            return redirect('signup')
+                    ->withErrors($validator)
+                    ->withInput();
+            return redirect()->back()->with(['error' => $validator->errors()->all()]);
+        }
+        // return $request;
+        $contact = $request->contact;
+        $student = StudentProfile::where('contact', $contact)->first();
+
+        if (!isset($student)) {
+            $data = new StudentProfile();
+            $data->first_name = $request->first_name;
+            $data->last_name = $request->last_name;
+            $data->country_name = $request->country;
+            // $data->country_code = $request->c_code;
+            $data->contact = $request->contact;
+            $data->email = $request->email;
+            $data->date_of_birth = $request->date_of_birth;
+            $data->status='pending';
+            $data->school = $request->school;
+             $data->board = 1;
+             $data->exam = 1;
+             $data->subject = 1;
+			 $data->type=$request->registration_type;
+			 $data->subscription_expire=date('Y-m-d H:i:s', strtotime('+3 days'));
+            if ($request->password == $request->confirm_password) {
+                $data->password =md5($request->password);
+                $data->save();
+            } else {
+                return redirect()->back()->with('error', 'Confirm Password does not Match');
+            }
+
+            // $token = 'Bearer '.$data->createToken('User')->accessToken;
+            // $data->access_token = 'Bearer '.$tokenResult->accessToken;
+            if ($data->save()) {
+                return redirect()->route('/')->with('success', 'Student Profile Created Successfully');
+            } else {
+                 return redirect()->back()->with('error', 'Profile Not Created');
+                }
+        } else {
+            return redirect()->back()->with('error', 'Student Already Registered, Please Login!');
+        }
+    }
 
     public function login_student(Request $request)
     {
@@ -151,7 +216,7 @@ class StudentProfileController extends Controller
         // return $password;
 
         $student = StudentProfile::where('contact', $contact)->orwhere('email',$contact)->first();
-		
+
 		if(!$student)
 		{
 			$response['status']=false;
@@ -170,7 +235,7 @@ class StudentProfileController extends Controller
             {
                 $student->subscription_expire=$diff->format("%a")+1;
             }
-		
+
         if (!isset($student)) {
             return response()->json(['status' => false, 'errors' => 'You Are Not Registered , Kindly Register with us !'], 422);
         } else {

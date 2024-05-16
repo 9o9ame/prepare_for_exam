@@ -93,7 +93,10 @@
                                                     </h6>
                                                     <h3 class="info dash-sub-heading">{{$data['revisit'] ?? ''}}</h3>
                                                     @php
-                                                    $revisit = ($data['revisit']*100)/$data['total']
+                                                    $revisit = 0;
+                                                    if ($data['total'] > 0) {
+                                                        $revisit = ($data['revisit']*100)/$data['total'];
+                                                    }
                                                     @endphp
                                                 </div>
                                                 <div><img src="{{ asset('assets/images/my-status/lastques.png') }}"
@@ -118,7 +121,10 @@
                                                     </h6>
                                                     <h3 class="info dash-sub-heading">{{$data['completed'] ?? ''}}</h3>
                                                     @php
-                                                    $completed = ($data['completed']*100)/$data['total']
+                                                    $completed = 0;
+                                                    if ($data['total'] > 0) {
+                                                        $completed = ($data['completed']*100)/$data['total'];
+                                                    }
                                                     @endphp
                                                 </div>
                                                 <div><img src="{{ asset('assets/images/my-status/totalquess.png') }}"
